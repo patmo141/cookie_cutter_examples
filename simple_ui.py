@@ -27,6 +27,15 @@ from .subtrees.common.maths import Point2D
 from .subtrees.common import ui
 from .subtrees.common.drawing import Drawing
 
+from .subtrees.common.boundvar import BoundInt, BoundFloat, BoundBool
+
+
+#some settings container
+options = {}
+options["variable_1"] = 5.0
+options["variable_3"] = True
+
+
 class CookieCutter_UITest(CookieCutter):
     bl_idname = "view3d.cookiecutter_ui_test"
     bl_label = "CookieCutter UI Test (Example)"
@@ -37,6 +46,16 @@ class CookieCutter_UITest(CookieCutter):
         'action': 'LEFTMOUSE'
     }
 
+    #for this, checkout "polystrips_props.py'
+    @property
+    def variable_2_gs(self):
+        return getattr(self, '_var_cut_count_value', 0)
+    @variable_2_gs.setter
+    def variable_2_gs(self, v):
+        if self.variable_2 == v: return
+        self.variable_2 = v
+        #if self.variable_2.disabled: return
+
     ### Redefine/OVerride of defaults methods from CookieCutter ###
     def start(self):
         opts = {
@@ -46,7 +65,16 @@ class CookieCutter_UITest(CookieCutter):
             'padding': 0,
             }
         
+        
+        #some data storage, simple single variables for now
+        #later, more coplex dictionaries or container class
+        self.variable_1 = BoundFloat('''options['variable_1']''', min_value =0.5, max_value = 15.5)
+        self.variable_2 = BoundInt('''self.variable_2_gs''',  min_value = 0, max_value = 10)
+        self.variable_3 = BoundBool('''options['variable_3']''')
+        
         self.setup_ui()
+        
+        
         
     #def update(self):
         #self.ui_action.set_label('Press: %s' % (','.join(self.actions.now_pressed.keys()),))
@@ -85,7 +113,7 @@ class CookieCutter_UITest(CookieCutter):
         #collapsible, and framed_dialog
         #first, know
         
-        self.ui_main = ui.framed_dialog(label = 'Framed Dialog',
+        self.ui_main = ui.framed_dialog(label = 'ui.framed_dialog',
                                           resiable = None,
                                           resiable_x = True,
                                           resizable_y=False, 
@@ -96,8 +124,27 @@ class CookieCutter_UITest(CookieCutter):
         
         # tools
         ui_tools = ui.div(id="tools", parent=self.ui_main)
-        ui.button(label='Action Button', parent=ui_tools, on_mouseclick=self.tool_action)    
-            
+        ui.button(label='ui.button', title = 'self.tool_action() method linked to button', parent=ui_tools, on_mouseclick=self.tool_action)    
+        
+        #create a collapsille container to hold a few variables
+        container = ui.collapsible('ui.collapse container', parent = self.ui_main)
+        
+        i1 = ui.labeled_input_text(label='Sui.labeled_input_text', 
+                              title='float property to BoundFLoat', 
+                              value= self.variable_1) 
+    
+        i2 = ui.labeled_input_text(label='ui.labled_input_text', 
+                              title='integer property to BoundInt', 
+                              value= self.variable_2)
+        
+        
+        i3 = ui.input_checkbox(
+                label='ui.input_checkbox',
+                title='True/False property to BoundBool')
+    
+        container.builder([i1, i2, i3])
+    
+    
     @CookieCutter.FSM_State('main')
     def modal_main(self):
         Drawing.set_cursor('DEFAULT')
@@ -107,9 +154,13 @@ class CookieCutter_UITest(CookieCutter):
             return 'action'
 
         if self.actions.pressed('cancel'):
+            print('cancelled')
+            self.done(cancel = True)
             return 'cancel'
         
-        if self.cations.pressed('commit'):
+        if self.actions.pressed('commit'):
+            print('committed')
+            self.done()
             return 'finished'
         
         
