@@ -2,11 +2,13 @@
 
 This project is a collection of minimal examples of how to build rich interactive addon user interfaces using the CGCookie addon_common library.
 
-#Tutorials
+# Tutorials
+
 This project will follow along with some youtube videos
 
 
-#How to Set Up
+# How to Set Up
+
 I have setup addon_common as a "subtree" of this repository, the main purpose of which is to allow github projects which leverage this to pull down the addon_common directory in the .zip.  Subtrees allow for relatively easy tracking and pushing of code to subtree repositories.   For projects that use addon_common as a subtree you can set it up like this
 
 ```
