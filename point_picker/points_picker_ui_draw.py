@@ -84,14 +84,24 @@ class PointsPicker_UI_Draw():
         
     @CookieCutter.Draw("post3d")
     def draw_postview(self):
-        bgl.glPointSize(8)
+        
         
         if not self.points_shader: return
         
+        bgl.glDepthMask(bgl.GL_TRUE)
+        bgl.glPointSize(8)
+        bgl.glDepthFunc(bgl.GL_LEQUAL)
+        
         self.points_shader.bind()
-        self.points_shader.uniform_float("color", (1,0,1,1))
+        self.points_shader.uniform_float("color", (1,1,1,1))
         self.points_batch.draw(self.points_shader)
-    
+        
+        bgl.glDepthFunc(bgl.GL_LEQUAL)
+        bgl.glDepthMask(bgl.GL_TRUE)
+        bgl.glDepthRange(0, 1)
+        
+        #bgl.glDisable(bgl.GL_POINT_SMOOTH)
+        #bgl.glDisable(bgl.GL_POINTS)
         bgl.glPointSize(1)
     
     

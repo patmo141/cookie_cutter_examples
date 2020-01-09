@@ -67,7 +67,7 @@ class CookieCutter(Operator, CookieCutter_UI, CookieCutter_FSM, CookieCutter_Ble
     def end_commit(self): pass
     def end_cancel(self): pass
     def end(self): pass
-
+    def should_pass_through(self, context, event): return False
     ############################################################################
 
     @classmethod
@@ -141,6 +141,8 @@ class CookieCutter(Operator, CookieCutter_UI, CookieCutter_FSM, CookieCutter_Ble
             elif self._nav:
                 self._nav = False
                 self._nav_time = time.time()
+                
+            
 
         try: self.update()
         except Exception as e: self._handle_exception(e, 'call update')
@@ -150,6 +152,11 @@ class CookieCutter(Operator, CookieCutter_UI, CookieCutter_FSM, CookieCutter_Ble
         if ret: return ret
 
         self._cc_fsm_update()
+        
+        #check this last
+        if self.should_pass_through(context, event):
+            return {'PASS_THROUGH'}
+                
         return {'RUNNING_MODAL'}
 
     def _cc_actions_init(self):
