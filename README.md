@@ -17,10 +17,21 @@ git subtree add --prefix=subtrees/addon_common addon_common b280
 ```
 
 this sets up the addon_common repository in a directory called "subtrees"  in your project.
-later when you want to pull updates from addon_common
+
+# How to Keep Up to Date
+to pull updates from addon_common
 
 ```
 git subtree pull —prefix=subtrees/addon_common addon_common b280
 ```
 
 If your project is using addon_common master branch, replace "b280" with "master"
+
+# Contributing to addon_common
+If you might contribute to addon_common, you should ford addon_common into your own repo and set up your subtree to track your fork.  You can then edit your forked addon_common directly in your project.  You can push your changes to your forked addon_common and later submit a pull request.
+
+```
+git subtree push —prefix=subtrees/addon_common addon_common b280
+```
+
+
